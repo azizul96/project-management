@@ -3,7 +3,8 @@ import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import session from "cookie-session";
 import { config } from "./config/app.config";
-// import connectDatabase from "./config/database.config";
+import connectDatabase from "./config/database.config";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
 // import { errorHandler } from "./middlewares/errorHandler.middleware";
 // import { HTTPSTATUS } from "./config/http.config";
 // import { asyncHandler } from "./middlewares/asyncHandler.middleware";
@@ -61,8 +62,9 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 // app.use(`${BASE_PATH}/project`, isAuthenticated, projectRoutes);
 // app.use(`${BASE_PATH}/task`, isAuthenticated, taskRoutes);
 
-// app.use(errorHandler);
+app.use(errorHandler);
 
 app.listen(config.PORT, async () => {
   console.log(`Server listening on port ${config.PORT} in ${config.NODE_ENV}`);
+  await connectDatabase();
 });
