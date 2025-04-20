@@ -5,8 +5,9 @@ import session from "cookie-session";
 import { config } from "./config/app.config";
 import connectDatabase from "./config/database.config";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
+import { HTTPSTATUS } from "./config/http.config";
+import { asyncHandler } from "./middlewares/asyncHandler.middleware";
 // import { errorHandler } from "./middlewares/errorHandler.middleware";
-// import { HTTPSTATUS } from "./config/http.config";
 // import { asyncHandler } from "./middlewares/asyncHandler.middleware";
 // import { BadRequestException } from "./utils/appError";
 // import { ErrorCodeEnum } from "./enums/error-code.enum";
@@ -49,11 +50,14 @@ app.use(
   })
 );
 
-app.get("/", (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    message: "Hello, Subscribe to the channel & share",
-  });
-});
+app.get(
+  "/",
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    res.status(HTTPSTATUS.OK).json({
+      message: "Hello, Subscribe to the channel & share",
+    });
+  })
+);
 
 // app.use(`${BASE_PATH}/auth`, authRoutes);
 // app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes);
