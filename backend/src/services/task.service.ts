@@ -1,6 +1,6 @@
 import { TaskPriorityEnum, TaskStatusEnum } from "../enums/task.enum";
 import MemberModel from "../models/member.model";
-import ProjectModel from "../models/project.model";
+import ProjectModel, { ProjectDocument } from "../models/project.model";
 import TaskModel from "../models/task.model";
 import { BadRequestException, NotFoundException } from "../utils/appError";
 
@@ -66,7 +66,7 @@ export const updateTaskService = async (
     dueDate?: string;
   }
 ) => {
-  const project = await ProjectModel.findById(projectId);
+  const project = (await ProjectModel.findById(projectId)) as ProjectDocument;
 
   if (!project || project.workspace.toString() !== workspaceId.toString()) {
     throw new NotFoundException(

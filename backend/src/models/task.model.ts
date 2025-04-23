@@ -1,38 +1,77 @@
 import mongoose, { Document, Schema } from "mongoose";
+import {
+  TaskPriorityEnum,
+  TaskPriorityEnumType,
+  TaskStatusEnum,
+  TaskStatusEnumType,
+} from "../enums/task.enum";
+import { generateTaskCode } from "../utils/uuid";
 
-export interface ProjectDocument extends Document {
-  name: string;
-  description: string | null; // Optional description for the project
-  emoji: string;
+export interface TaskDocument extends Document {
+  taskCode: string;
+  title: string;
+  description: string | null;
+  project: mongoose.Types.ObjectId;
   workspace: mongoose.Types.ObjectId;
+  status: TaskStatusEnumType;
+  priority: TaskPriorityEnumType;
+  assignedTo: mongoose.Types.ObjectId | null;
   createdBy: mongoose.Types.ObjectId;
+  dueDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const projectSchema = new Schema<ProjectDocument>(
+const taskSchema = new Schema<TaskDocument>(
   {
-    name: {
+    taskCode: {
+      type: String,
+      unique: true,
+      default: generateTaskCode,
+    },
+    title: {
       type: String,
       required: true,
       trim: true,
     },
-    emoji: {
+    description: {
       type: String,
-      required: false,
       trim: true,
-      default: "📊",
+      default: null,
     },
-    description: { type: String, required: false },
+    project: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+      required: true,
+    },
     workspace: {
       type: Schema.Types.ObjectId,
       ref: "Workspace",
       required: true,
     },
+    status: {
+      type: String,
+      enum: Object.values(TaskStatusEnum),
+      default: TaskStatusEnum.TODO,
+    },
+    priority: {
+      type: String,
+      enum: Object.values(TaskPriorityEnum),
+      default: TaskPriorityEnum.MEDIUM,
+    },
+    assignedTo: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    dueDate: {
+      type: Date,
+      default: null,
     },
   },
   {
@@ -40,5 +79,7 @@ const projectSchema = new Schema<ProjectDocument>(
   }
 );
 
-const ProjectModel = mongoose.model<ProjectDocument>("Project", projectSchema);
-export default ProjectModel;
+const TaskModel =
+  mongoose.models.Task || mongoose.model<TaskDocument>("Task", taskSchema);
+
+export default TaskModel;
