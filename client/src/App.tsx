@@ -1,13 +1,7 @@
+import AppRoutes from "./routes";
+
 function App() {
-  return (
-    <>
-      <div>
-        <h1 className="text-red-500 font-bold text-5xl">
-          Project Management App
-        </h1>
-      </div>
-    </>
-  );
+  return <AppRoutes />;
 }
 
 export default App;
